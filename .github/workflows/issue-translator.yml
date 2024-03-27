@@ -1,0 +1,19 @@
+name: issue-translator
+on:
+  issues:
+    types: [opened]
+  issue_comment:
+    types: [created]
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: usthe/issues-translate-action@v2.7
+        with:
+          BOT_GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN }}
+          IS_MODIFY_TITLE: false
+          # not require, default false, . Decide whether to modify the issue title
+          # if true, the robot account @Issues-translate-bot must have modification permissions, invite @Issues-translate-bot to your project or use your custom bot.
+          CUSTOM_BOT_NOTE: "Non-English issue found, auto translation (may not be accurate):"
+          # not require. Customize the translation robot prefix message.

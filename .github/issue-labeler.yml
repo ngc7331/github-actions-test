@@ -1,0 +1,137 @@
+default-mode:
+  add:
+  # by default, a comment should not remove any label
+  remove: [ issues ]
+
+labels:
+  # --- frontend ---
+  - name: module_frontend_bpu
+    content: "module: frontend-BPU"
+    regexes:
+      - "[Bb][Pp][Uu]|[Bb]ranch [Pp]redict(ion|er)|[Rr][Aa][Ss]|([Ii][Tt])?[Tt][Aa][Gg][Ee]|u?[Ff][Tt][Bb]"
+
+  - name: module_frontend_ifu
+    content: "module: frontend-IFU"
+    regexes:
+      - "[Ii][Ff][Uu]|[Ii]nstruction [Ff]etch [Uu]nit"
+
+  - name: module_frontend_ftq
+    content: "module: frontend-FTQ"
+    regexes:
+      - "[Ff][Tt][Qq]|[Ff]etch [Tt]arget [Qq]ueue"
+
+  - name: module_frontend_icache
+    content: "module: frontend-ICache"
+    regexes:
+      - "[Ii]$|[Ii][Cc]ache|[Ii]nstruction [Cc]ache|[Ff][Dd][Ii][Pp]|[Ff]ech [Dd]irected [Ii]nstruction [Pp]refetch"
+
+  # TODO
+
+  # general label if no specific module is mentioned
+  - name: module_frontend_general
+    content: "module: frontend"
+    regexes:
+      - "[Ff]rontend"
+    skip-if:
+      - module_frontend_bpu
+      - module_frontend_ifu
+      - module_frontend_ftq
+      - module_frontend_icache
+
+
+
+  # --- backend ---
+  - name: module_backend_dispatch
+    content: "module: backend-dispatch"
+    regexes:
+      - "[Dd]ispatch"
+
+  # TODO
+
+  # general label if no specific module is mentioned
+  - name: module_backend_general
+    content: "module: backend"
+    regexes:
+      - "[Bb]ackend"
+    skip-if:
+      - module_backend_dispatch
+
+
+
+  # --- memory ---
+  - name: module_memory_lsq
+    content: "module: memory-LSQ"
+    regexes:
+      - "[Ll][Ss][Qq]|([Ll]oad|[Ss]tore) ?[Qq]ueue"
+
+  # TODO
+
+  - name: module_memory_general
+    content: "module: memory"
+    regexes:
+      - "[Mm]emory"
+    skip-if:
+      - module_memory_lsq
+
+
+
+  # --- cache ---
+  # TODO
+
+  - name: module_cache_general
+    content: "module: cache"
+    regexes:
+      - "[Cc]ache"
+
+
+
+  # --- others ---
+  - name: module_difftest
+    content: "module: difftest"
+    regexes:
+      - "[Dd]iff[Tt]est"
+
+  - name: module_nemu
+    content: "module: nemu"
+    regexes:
+      - "[Nn][Ee][Mu][Uu]"
+
+
+
+  # --- usage ---
+  - name: usage_compile
+    content: "usage: compile"
+    regexes:
+      - "[Cc]ompile"
+      - "[Cc]ompil(ation|er)"
+      - "make (emu|verilog)"
+
+  - name: usage_simulate
+    content: "usage: sim"
+    regexes:
+      - "[Ss]imulat(e|or|ion)"
+      - "[Vv][Cc][Ss]"
+
+
+
+  # general label "ambigous" if no specific module or usage is matched
+  - name: ambigous
+    content: "ambigous"
+    # allow to remove the label if a comment, which matches any specific module, is added
+    mode:
+      issues:
+      issue_comment: remove
+    remove-if:
+      - module_frontend_bpu
+      - module_frontend_ifu
+      - module_frontend_ftq
+      - module_frontend_icache
+      - module_backend_dispatch
+      - module_backend_general
+      - module_memory_lsq
+      - module_memory_general
+      - module_cache_general
+      - module_difftest
+      - module_nemu
+      - usage_compile
+      - usage_simulate
