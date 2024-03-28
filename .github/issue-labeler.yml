@@ -9,11 +9,15 @@ labels:
     content: "module: frontend-BPU"
     regexes:
       - "[Bb][Pp][Uu]|[Bb]ranch [Pp]redict(ion|er)|[Rr][Aa][Ss]|([Ii][Tt])?[Tt][Aa][Gg][Ee]|u?[Ff][Tt][Bb]"
+    assignee:
+      - ngc7331
 
   - name: module_frontend_ifu
     content: "module: frontend-IFU"
     regexes:
       - "[Ii][Ff][Uu]|[Ii]nstruction [Ff]etch [Uu]nit"
+    assignee:
+      - ngc7331-bot
 
   - name: module_frontend_ftq
     content: "module: frontend-FTQ"

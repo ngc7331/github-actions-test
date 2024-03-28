@@ -9,7 +9,7 @@ jobs:
   run:
     runs-on: ubuntu-latest
     steps:
-    - uses: zzyyyl/issue-checker@v1.7
+    - uses: ngc7331/issue-checker@v1.8a
       with:
         repo-token: "${{ secrets.BOT_GITHUB_TOKEN }}"
         configuration-path: .github/issue-labeler.yml
