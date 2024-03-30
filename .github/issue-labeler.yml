@@ -1,41 +1,74 @@
-default-mode:
-  add:
-  # by default, a comment should not remove any label
-  remove: [ issues ]
+default:
+  # use fuzzy match by default
+  mode: fuzzy
+  fuzzy:
+    thres: 90
+  case-sensitive: false
 
-labels:
+label-nonmatch: ambigous
+
+rules:
+  # --- usage ---
+  usage_compile:
+    match:
+      - keyword: make emu
+      - keyword: make verilog
+      - keyword: compile
+    label: "usage: compile"
+    # finalize here, no need to check following rules
+    final: true
+
+  usage_simulate:
+    match:
+      - keyword: vcs
+      - keyword: simulate
+    label: "usage: sim"
+    final: true
+
+
+
   # --- frontend ---
-  - name: module_frontend_bpu
-    content: "module: frontend-BPU"
-    regexes:
-      - "[Bb][Pp][Uu]|[Bb]ranch [Pp]redict(ion|er)|[Rr][Aa][Ss]|([Ii][Tt])?[Tt][Aa][Gg][Ee]|u?[Ff][Tt][Bb]"
-    assignee:
+  module_frontend_bpu:
+    match:
+      # use regex to match the short keyword
+      - keyword: BPU
+        mode: regex
+      - keyword: (IT)?TAGE
+        mode: regex
+        # use case-sensitive match to prevent false positive like "stage" from being matched
+        case-sensitive: true
+      - keyword: Branch Prediction
+    label: "module: frontend-BPU"
+    assignees:
       - ngc7331
 
-  - name: module_frontend_ifu
-    content: "module: frontend-IFU"
-    regexes:
-      - "[Ii][Ff][Uu]|[Ii]nstruction [Ff]etch [Uu]nit"
-    assignee:
+  module_frontend_ifu:
+    match:
+      - keyword: IFU
+        mode: regex
+      - keyword: Instruction Fetch Unit
+    label: "module: frontend-IFU"
+    assignees:
       - ngc7331-bot
 
-  - name: module_frontend_ftq
-    content: "module: frontend-FTQ"
-    regexes:
-      - "[Ff][Tt][Qq]|[Ff]etch [Tt]arget [Qq]ueue"
+  module_frontend_ftq:
+    match:
+      - keyword: FTQ
+        mode: regex
+      - keyword: Fetch Target Queue
+    label: "module: frontend-FTQ"
 
-  - name: module_frontend_icache
-    content: "module: frontend-ICache"
-    regexes:
-      - "[Ii]$|[Ii][Cc]ache|[Ii]nstruction [Cc]ache|[Ff][Dd][Ii][Pp]|[Ff]ech [Dd]irected [Ii]nstruction [Pp]refetch"
+  module_frontend_icache:
+    match:
+      - keyword: ICache
+        mode: regex
+      - keyword: Instruction Cache
+    label: "module: frontend-ICache"
 
-  # TODO
-
-  # general label if no specific module is mentioned
-  - name: module_frontend_general
-    content: "module: frontend"
-    regexes:
-      - "[Ff]rontend"
+  module_frontend_general:
+    match:
+      - keyword: frontend
+    label: "module: frontend"
     skip-if:
       - module_frontend_bpu
       - module_frontend_ifu
@@ -45,97 +78,54 @@ labels:
 
 
   # --- backend ---
-  - name: module_backend_dispatch
-    content: "module: backend-dispatch"
-    regexes:
-      - "[Dd]ispatch"
+  module_backend_dispatch:
+    match:
+      - keyword: Dispatch
+    label: "module: backend-Dispatch"
 
-  # TODO
-
-  # general label if no specific module is mentioned
-  - name: module_backend_general
-    content: "module: backend"
-    regexes:
-      - "[Bb]ackend"
+  module_backend_general:
+    match:
+      - keyword: backend
+    label: "module: backend"
     skip-if:
       - module_backend_dispatch
 
 
 
   # --- memory ---
-  - name: module_memory_lsq
-    content: "module: memory-LSQ"
-    regexes:
-      - "[Ll][Ss][Qq]|([Ll]oad|[Ss]tore) ?[Qq]ueue"
+  module_memory_lsq:
+    match:
+      - keyword: LSQ
+        mode: regex
+      - keyword: Load Store Queue
+    label: "module: memory-LSQ"
 
-  # TODO
-
-  - name: module_memory_general
-    content: "module: memory"
-    regexes:
-      - "[Mm]emory"
+  module_memory_general:
+    match:
+      - keyword: memory
+    label: "module: memory"
     skip-if:
       - module_memory_lsq
 
 
 
   # --- cache ---
-  # TODO
-
-  - name: module_cache_general
-    content: "module: cache"
-    regexes:
-      - "[Cc]ache"
+  module_cache_general:
+    match:
+      - keyword: cache
+    label: "module: cache"
+    skip-if:
+      - module_frontend_icache
 
 
 
   # --- others ---
-  - name: module_difftest
-    content: "module: difftest"
-    regexes:
-      - "[Dd]iff[Tt]est"
+  module_difftest:
+    match:
+      - keyword: difftest
+    label: "module: difftest"
 
-  - name: module_nemu
-    content: "module: nemu"
-    regexes:
-      - "[Nn][Ee][Mu][Uu]"
-
-
-
-  # --- usage ---
-  - name: usage_compile
-    content: "usage: compile"
-    regexes:
-      - "[Cc]ompile"
-      - "[Cc]ompil(ation|er)"
-      - "make (emu|verilog)"
-
-  - name: usage_simulate
-    content: "usage: sim"
-    regexes:
-      - "[Ss]imulat(e|or|ion)"
-      - "[Vv][Cc][Ss]"
-
-
-
-  # general label "ambigous" if no specific module or usage is matched
-  - name: ambigous
-    content: "ambigous"
-    # allow to remove the label if a comment, which matches any specific module, is added
-    mode:
-      issues:
-      issue_comment: remove
-    remove-if:
-      - module_frontend_bpu
-      - module_frontend_ifu
-      - module_frontend_ftq
-      - module_frontend_icache
-      - module_backend_dispatch
-      - module_backend_general
-      - module_memory_lsq
-      - module_memory_general
-      - module_cache_general
-      - module_difftest
-      - module_nemu
-      - usage_compile
-      - usage_simulate
+  module_nemu:
+    match:
+      - keyword: nemu
+    label: "module: nemu"
